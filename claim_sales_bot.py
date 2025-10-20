@@ -1,33 +1,26 @@
 import os 
 import logging 
-from telegram.ext import Updater, CommandHandler 
-from flask import Flask 
+import telebot 
  
 logging.basicConfig(level=logging.INFO) 
 logger = logging.getLogger(__name__) 
  
-app = Flask(__name__) 
+token = os.environ.get('BOT_TOKEN') 
+if not token: 
+    logger.error("? ERROR: BOT_TOKEN environment variable not set") 
+    logger.error("?? Set BOT_TOKEN in Render environment variables") 
+    exit(1) 
  
-@app.route('/') 
-def home(): 
-    return '?? PokaiShop Bot is running!' 
+bot = telebot.TeleBot(token) 
  
-def start_command(update, context): 
-    update.message.reply_text('?? PokaiShop Bot is working!') 
+@bot.message_handler(commands=['start', 'help']) 
+def send_welcome(message): 
+    bot.reply_to(message, "?? PokaiShop Bot is running!") 
  
-def main(): 
-    token = os.environ.get('BOT_TOKEN') 
-    if not token: 
-        logger.error('? BOT_TOKEN not set') 
-        return 
- 
-    updater = Updater(token, use_context=True) 
-    dispatcher = updater.dispatcher 
-    dispatcher.add_handler(CommandHandler('start', start_command)) 
- 
-    logger.info('?? Starting bot...') 
-    updater.start_polling() 
-    updater.idle() 
+@bot.message_handler(func=lambda message: True) 
+def echo_all(message): 
+    bot.reply_to(message, "I received: " + message.text) 
  
 if __name__ == '__main__': 
-    main() 
+    logger.info("?? Starting PokaiShop Bot...") 
+    bot.polling(non_stop=True) 
