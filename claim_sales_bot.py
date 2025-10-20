@@ -22,6 +22,14 @@ def run_bot():
     logger.info("? Bot token found, creating bot...") 
     bot = telebot.TeleBot(token) 
  
+    # DELETE ANY EXISTING WEBHOOK FIRST 
+    logger.info("?? Deleting any existing webhook...") 
+    try: 
+        bot.delete_webhook() 
+        logger.info("? Webhook deleted successfully") 
+    except Exception as e: 
+        logger.error(f"? Error deleting webhook: {e}") 
+ 
     @bot.message_handler(commands=['start']) 
     def start_message(message): 
         logger.info(f"?? Received /start from {message.from_user.id}") 
