@@ -1,0 +1,12 @@
+services: 
+  - type: web 
+    name: pokaishop-bot 
+    env: python 
+    plan: free 
+    buildCommand: pip install -r requirements.txt 
+    startCommand: python bot.py 
+    envVars: 
+      - key: BOT_TOKEN 
+        value: your_bot_token_here 
+      - key: DEEPSEEK_API_KEY 
+        value: your_deepseek_key_here 
