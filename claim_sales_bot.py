@@ -1,33 +1,33 @@
 import os 
-import requests 
-from flask import Flask 
-from telegram.ext import Application, CommandHandler, MessageHandler, filters 
 import logging 
+from telegram.ext import Updater, CommandHandler 
+from flask import Flask 
  
-logging.basicConfig(level=logging.INFO) 
-logger = logging.getLogger(__name__) 
+logging.basicConfig\(level=logging.INFO\) 
+logger = logging.getLogger\(__name__\) 
  
-app = Flask(__name__) 
+app = Flask\(__name__\) 
  
-async def start(update, context): 
-    await update.message.reply_text('?? PokaiShop Bot is running!') 
+@app.route\(\'/\'\) 
+def home\(\): 
+    return \'?? PokaiShop Bot is running!\' 
  
-def main(): 
-    token = os.environ.get('BOT_TOKEN') 
+def start_command\(update, context\): 
+    update.message.reply_text\(\'?? PokaiShop Bot is working!\'\) 
+ 
+def main\(\): 
+    token = os.environ.get\(\'BOT_TOKEN\'\) 
     if not token: 
-        logger.error('No BOT_TOKEN found') 
+        logger.error\(\'? BOT_TOKEN not set\'\) 
         return 
  
-    application = Application.builder().token(token).build() 
-    application.add_handler(CommandHandler('start', start)) 
+    updater = Updater\(token, use_context=True\) 
+    dispatcher = updater.dispatcher 
+    dispatcher.add_handler\(CommandHandler\(\'start\', start_command\)\) 
  
-    # Start Flask web server 
-    flask_thread = threading.Thread(target=lambda: app.run(host='0.0.0.0', port=5000)) 
-    flask_thread.daemon = True 
-    flask_thread.start() 
+    logger.info\(\'?? Starting bot...\'\) 
+    updater.start_polling\(\) 
+    updater.idle\(\) 
  
-    # Start bot 
-    application.run_polling() 
- 
-if __name__ == '__main__': 
-    main() 
+if __name__ == \'__main__\': 
+    main\(\) 
